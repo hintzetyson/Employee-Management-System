@@ -49,6 +49,8 @@ function questions() {
         }
     ]).then(function (answer) {
         switch (answer.mainMenu) {
+
+            //Views, all very similar
             case "View all":
                 var query = connection.query("SELECT * FROM employee", function (err, data) {
                     if (err) throw err;
@@ -68,6 +70,7 @@ function questions() {
                     console.table(data);
                 });
                 break;
+                //How to add an employee
             case "Add an employee":
                 var query = connection.query("SELECT id, title FROM role", function (err, data) {
                     if (err) throw err;
@@ -103,6 +106,7 @@ function questions() {
                     });
                 });
                 break;
+                //How to add a role
             case "Add a role":
                 var query = connection.query("SELECT id, department FROM department", function (err,data) {
                     if (err) throw err;
@@ -130,13 +134,32 @@ function questions() {
                         var array = data.department.split(" ");
                         var departmentID = parseInt(array[0]);
                         var query = connection.query(`INSERT INTO role (title, salary, department_id) 
-                        VALUES ('${data.title}', ${data.salary}), ${departmentID}`, function (err, data) {
+                        VALUES ('${data.title}', '${data.salary}'), ${departmentID}`, function (err, data) {
                             if (err) throw err;
                             console.log("Role has successfully been added to the table")
                         })
                     })
                 })
-            // case "Add a department":
+                //How to add a department
+            case "Add a department":
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "department",
+                        message: "Enter the department's name:",
+                        validate: validateString
+                    }
+                ]).then(function (data) {
+                    var query = connection.query(`INSERT INTO department (department) VALUES ('${data.department}');`,
+                    function (err, data) {
+                        if (err) throw err;
+                        return data;
+                    })
+
+                    console.log("Department has successfully been added to the list")
+                });
+                break;
+
         }
     })
 
