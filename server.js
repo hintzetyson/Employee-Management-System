@@ -53,6 +53,7 @@ function questions() {
             case "Add an employee":
                 var query = connection.query("SELECT id, title FROM role", function (err, data) {
                     if (err) throw err;
+                    let choices = data.map(x => `${x.id} -${x.title}`)
                     inquirer.prompt([
                         {
                             type: "input",
@@ -69,7 +70,7 @@ function questions() {
                             type: "list",
                             name: "role",
                             message: "Select this employee's role:",
-
+                            choices: [...choices]
                         }
                     ]).then(function (data) {
                         var array = data.role.split(" ");
