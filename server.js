@@ -13,6 +13,24 @@ var connection = mysql.createConnection({
     database: "company_db"
 });
 
+//Validation for strings
+
+function validateString(data) {
+    if (data != "" && isNaN(parseInt(data))) {
+        return true;
+    }
+
+    return false;
+}
+
+//Validation for numbers
+function validateNumbers(data) {
+    if (data != "" && !isNaN(parseInt(answer))) {
+        return true;
+    }
+    return false;
+}
+
 function questions() {
     inquirer.prompt ([
         {
@@ -59,12 +77,14 @@ function questions() {
                             type: "input",
                             name: "firstName",
                             message: "Enter the employee's first name",
+                            validate: "validateString"
 
                         },
                         {
                             type: "input",
                             name: "lastName",
                             message: "Enter the employee's last name",
+                            validate: "validateString"
                         },
                         {
                             type: "list",
