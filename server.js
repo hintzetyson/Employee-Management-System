@@ -50,6 +50,41 @@ function questions() {
                     console.table(data);
                 });
                 break;
+            case "Add an employee":
+                var query = connection.query("SELECT id, title FROM role", function (err, data) {
+                    if (err) throw err;
+                    inquirer.prompt([
+                        {
+                            type: "input",
+                            name: "firstName",
+                            message: "Enter the employee's first name",
+
+                        },
+                        {
+                            type: "input",
+                            name: "lastName",
+                            message: "Enter the employee's last name",
+                        },
+                        {
+                            type: "list",
+                            name: "role",
+                            message: "Select this employee's role:",
+
+                        }
+                    ]).then(function (data) {
+                        var array = data.role.split(" ");
+                        var roleID = parseInt(arr[0]);
+                        var query = connectionl.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
+                        ('${data.firstName}', '${data.lastName}', ${roleID}, 0)`, function (err, data) {
+                            if (err) throw err;
+                            console.log("Employee has been added to the table");
+                        })
+                    })
+                });
+                break;
+            // case "Add a role":
+
+            // case "Add a department":
         }
     })
 
