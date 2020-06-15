@@ -94,17 +94,48 @@ function questions() {
                         }
                     ]).then(function (data) {
                         var array = data.role.split(" ");
-                        var roleID = parseInt(arr[0]);
+                        var roleID = parseInt(array[0]);
                         var query = connectionl.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
                         ('${data.firstName}', '${data.lastName}', ${roleID}, 0)`, function (err, data) {
                             if (err) throw err;
                             console.log("Employee has been added to the table");
-                        })
-                    })
+                        });
+                    });
                 });
                 break;
-            // case "Add a role":
-
+            case "Add a role":
+                var query = connection.query("SELECT id, department FROM department", function (err,data) {
+                    if (err) throw err;
+                    let choices = data.map(x => `${x.id} -${x.department}`);
+                    inquirer.prompt([
+                        {
+                            type: "input",
+                            name: "title",
+                            message: "Enter the role name:",
+                            validate: "validateString"
+                        },
+                        {
+                            type: "input",
+                            name: "salary",
+                            message: "Enter the salary for this role:",
+                            validate: "validateNumber"
+                        },
+                        {
+                            type: "list",
+                            name: "department",
+                            message: "Select the department for this role:",
+                            choices: [...choices]
+                        }
+                    ]).then(function (data) {
+                        var array = data.department.split(" ");
+                        var departmentID = parseInt(array[0]);
+                        var query = connection.query(`INSERT INTO role (title, salary, department_id) 
+                        VALUES ('${data.title}', ${data.salary}), ${departmentID}`, function (err, data) {
+                            if (err) throw err;
+                            console.log("Role has successfully been added to the table")
+                        })
+                    })
+                })
             // case "Add a department":
         }
     })
