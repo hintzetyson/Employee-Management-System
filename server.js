@@ -160,6 +160,38 @@ function questions() {
                 });
                 break;
 
+            case "Update employee role":
+                //create a constant for employee and fill it
+                const emp = {
+                    first_name: "",
+                    last_name: "",
+                    role_id: 0,
+                    manager_id: 0,
+                    employeeID: 0
+                };
+                var query = connection.query("SELECT id, first_name, last_name FROM employee", function (err, data) {
+                    if (err) throw err;
+                    let choices = data.map ( x=> `${x.id} - ${x.first_name} ${x.last_name}`);
+                    inquirer.prompt([
+                        {
+                            type: "list",
+                            name: "employeeName",
+                            message: "Select an employee:",
+                            choices: [...choices]
+                        }
+                    ]).then(function (data) {
+                        var array = data.employeeName.split(" ");
+                        emp.employeeID = parseInt(array[0]);
+                        inquirer.prompt([
+                            {
+                                type: "input",
+                                name: "firstName",
+                                message: "Enter the employee's updated first name:",
+                                validate: "validateString"
+                            }
+                        ])                    
+                    })
+                })
         }
     })
 
