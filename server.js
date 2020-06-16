@@ -27,6 +27,24 @@ function validateNumbers(data) {
         return true;
     }
     return false;
+};
+
+//Continue function
+function continueAdding() {
+    inquirer.prompt([
+        {
+            type: "confirm",
+            name: "continue",
+            message: "Would you like to add further information?"
+        }
+    ]).then(function (data) {
+        if (data.continue) {
+            questions()
+        }
+        else {
+            return;
+        }
+    })
 }
 
 function questions() {
@@ -53,6 +71,7 @@ function questions() {
                 var query = connection.query("SELECT * FROM employee", function (err, data) {
                     if (err) throw err;
                     console.table(data);
+                    continueAdding();
                 });
                 break;
 
@@ -60,12 +79,14 @@ function questions() {
                 var query = connection.query("SELECT * FROM role", function (err, data) {
                     if (err) throw err;
                     console.table(data);
+                    continueAdding();
                 });
                 break;
             case "View all departments":
                 var query = connection.query("SELECT * FROM department", function (err, data) {
                     if (err) throw err;
                     console.table(data);
+                    continueAdding();
                 });
                 break;
                 //How to add an employee
@@ -100,6 +121,7 @@ function questions() {
                         ('${data.firstName}', '${data.lastName}', ${roleID}, 0)`, function (err, data) {
                             if (err) throw err;
                             console.log("Employee has been added to the table");
+                            continueAdding();
                         });
                     });
                 });
@@ -134,7 +156,8 @@ function questions() {
                         var query = connection.query(`INSERT INTO role (title, salary, department_id) 
                         VALUES ('${data.title}', '${data.salary}'), ${departmentID}`, function (err, data) {
                             if (err) throw err;
-                            console.log("Role has successfully been added to the table")
+                            console.log("Role has successfully been added to the table");
+                            continueAdding();
                         })
                     })
                 })
@@ -155,6 +178,7 @@ function questions() {
                     })
 
                     console.log("Department has successfully been added to the list")
+                    continueAdding();
                 });
                 break;
 
@@ -211,9 +235,10 @@ function questions() {
                                     emp.roleID = parseInt(array[0]);
                                     var query = connection.query("SELECT id, first_name, last_name FROM employee", function (err, data) {
                                         if (err) throw err;
-                                        let choices = data.mpa(x => `${x.id} - ${x.first_name} ${x.last_name}`);
+                                        let choices = data.map(x => `${x.id} - ${x.first_name} ${x.last_name}`);
+                                        //Adds the choice to not have a manager for the employee
                                         choices.push("This employee does not have a manger");
-                                        inquirer([
+                                        inquirer.prompt([
                                             {
                                                 type: "list",
                                                 name: "managerSelection",
@@ -228,9 +253,9 @@ function questions() {
                                                 var array = data.managerSelection.split(" ");
                                                 emp.manager_id = parseInt(array[0]);
                                             }
-                                            var query = connection.query(`UPDATE employee SET first_name = '${emp.first_name}', 
-                                            last_name = '${emp.last_name}, role_id = ${emp.roleID}, manager_id =${emp.manager_id} WHERE id = ${emp.employeeID}`, function (err, data) {
+                                            var query = connection.query(`UPDATE employee SET first_name = '${emp.first_name}', last_name = '${emp.last_name}', role_id = ${emp.roleID}, manager_id =${emp.manager_id} WHERE id = ${emp.employeeID}`, function (err, data) {
                                                 if (err) throw err;
+                                                continueAdding();
                                                 return data;
                                             })
                                         })
@@ -239,10 +264,11 @@ function questions() {
                             })
                         })                    
                     })
-                })
+                });
+                break;
         }
     })
 
 }
 
-questions()
+questions();
