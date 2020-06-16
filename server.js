@@ -1,15 +1,13 @@
 const inquirer = require("inquirer");
-
+const mysql = require("mysql");
 const consoleTable = require("console.table");
-
-const inquirer = require("inquirer");
 
 //Connect to mysql server
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "",
+    password: "Iamtheman420!!!",
     database: "company_db"
 });
 
@@ -48,10 +46,10 @@ function questions() {
             ]
         }
     ]).then(function (answer) {
-        switch (answer.mainMenu) {
+        switch (answer.topMenu) {
 
             //Views, all very similar
-            case "View all":
+            case "View all employees":
                 var query = connection.query("SELECT * FROM employee", function (err, data) {
                     if (err) throw err;
                     console.table(data);
@@ -79,15 +77,15 @@ function questions() {
                         {
                             type: "input",
                             name: "firstName",
-                            message: "Enter the employee's first name",
-                            validate: "validateString"
+                            message: "Enter the employee's first name:",
+                            validate: validateString
 
                         },
                         {
                             type: "input",
                             name: "lastName",
-                            message: "Enter the employee's last name",
-                            validate: "validateString"
+                            message: "Enter the employee's last name:",
+                            validate: validateString
                         },
                         {
                             type: "list",
@@ -98,7 +96,7 @@ function questions() {
                     ]).then(function (data) {
                         var array = data.role.split(" ");
                         var roleID = parseInt(array[0]);
-                        var query = connectionl.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
+                        var query = connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
                         ('${data.firstName}', '${data.lastName}', ${roleID}, 0)`, function (err, data) {
                             if (err) throw err;
                             console.log("Employee has been added to the table");
@@ -116,13 +114,13 @@ function questions() {
                             type: "input",
                             name: "title",
                             message: "Enter the role name:",
-                            validate: "validateString"
+                            validate: validateString
                         },
                         {
                             type: "input",
                             name: "salary",
                             message: "Enter the salary for this role:",
-                            validate: "validateNumber"
+                            validate: validateNumbers
                         },
                         {
                             type: "list",
@@ -187,12 +185,38 @@ function questions() {
                                 type: "input",
                                 name: "firstName",
                                 message: "Enter the employee's updated first name:",
-                                validate: "validateString"
+                                validate: validateString
+                            },
+                            {
+                                type: "input",
+                                name: "lastName",
+                                message: "Enter the employee's updated last name:",
+                                validate: validateString
                             }
-                        ])                    
+                        ]).then(function (data) {
+                            emp.first_name = data.firstName;
+                            emp.last_name = data.lastName;
+                            var query = connection.query("SELECT id, title FROM role", function (err, data) {
+                                if (err) throw err;
+                                let choices = data.map(x => `${x.id} - ${x.title}`);
+                                inquirer.prompt([
+                                    {
+                                        type : "list",
+                                        name: "title",
+                                        message: "Select a title for this employee:",
+                                        choices: [...choices]
+                                    }
+                                ]).then(function (data) {
+                                    var array = data.title.split(" ");
+                                    emp.roleID = parseInt(array[0]);
+                                })
+                            })
+                        })                    
                     })
                 })
         }
     })
 
 }
+
+questions()
