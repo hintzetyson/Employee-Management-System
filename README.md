@@ -1,4 +1,4 @@
-# Simple README Generator
+# Employee Management System
 
 [![repo size](https://img.shields.io/github/repo-size/hintzetyson/Employee-Management-System)](https://github.com/hintzetyson/Employee-Management-System)
 
