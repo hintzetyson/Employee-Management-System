@@ -209,6 +209,32 @@ function questions() {
                                 ]).then(function (data) {
                                     var array = data.title.split(" ");
                                     emp.roleID = parseInt(array[0]);
+                                    var query = connection.query("SELECT id, first_name, last_name FROM employee", function (err, data) {
+                                        if (err) throw err;
+                                        let choices = data.mpa(x => `${x.id} - ${x.first_name} ${x.last_name}`);
+                                        choices.push("This employee does not have a manger");
+                                        inquirer([
+                                            {
+                                                type: "list",
+                                                name: "managerSelection",
+                                                message: "Select a manager for this employee",
+                                                choices: [...choices]
+                                            }
+                                        ]).then(function (data) {
+                                            if (data.manager === "This employee does not have a manager") {
+                                                emp.manager_id = null;
+                                            }
+                                            else {
+                                                var array = data.managerSelection.split(" ");
+                                                emp.manager_id = parseInt(array[0]);
+                                            }
+                                            var query = connection.query(`UPDATE employee SET first_name = '${emp.first_name}', 
+                                            last_name = '${emp.last_name}, role_id = ${emp.roleID}, manager_id =${emp.manager_id} WHERE id = ${emp.employeeID}`, function (err, data) {
+                                                if (err) throw err;
+                                                return data;
+                                            })
+                                        })
+                                    })
                                 })
                             })
                         })                    
