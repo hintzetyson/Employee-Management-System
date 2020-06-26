@@ -26,7 +26,7 @@ npm i
 
 ## Usage
 
-After running an npm install in the directory folder, run the command: node server.js then answer each question. You'll be able to create and edit a team! Here is a [video to demonstrate how it works.]()
+After running an npm install in the directory folder, run the command: node server.js then answer each question. You'll be able to create and edit a team! Here is a [video to demonstrate how it works.](https://youtu.be/woUzZeJTG_0)
 
 ## Questions
 

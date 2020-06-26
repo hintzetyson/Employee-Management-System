@@ -7,7 +7,7 @@ var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "",
+    password: "Iamtheman420!!!",
     database: "company_db"
 });
 
@@ -23,7 +23,7 @@ function validateString(data) {
 
 //Validation for numbers
 function validateNumbers(data) {
-    if (data != "" && !isNaN(parseInt(answer))) {
+    if (data != "" && !isNaN(parseInt(data))) {
         return true;
     }
     return false;
@@ -128,9 +128,9 @@ function questions() {
                 break;
                 //How to add a role
             case "Add a role":
-                var query = connection.query("SELECT id, department FROM department", function (err,data) {
+                var query = connection.query("SELECT id, name FROM department", function (err,data) {
                     if (err) throw err;
-                    let choices = data.map(x => `${x.id} -${x.department}`);
+                    let choices = data.map(x => `${x.id} - ${x.name}`);
                     inquirer.prompt([
                         {
                             type: "input",
@@ -154,13 +154,14 @@ function questions() {
                         var array = data.department.split(" ");
                         var departmentID = parseInt(array[0]);
                         var query = connection.query(`INSERT INTO role (title, salary, department_id) 
-                        VALUES ('${data.title}', '${data.salary}'), ${departmentID}`, function (err, data) {
+                        VALUES ('${data.title}', '${data.salary}', ${departmentID})`, function (err, data) {
                             if (err) throw err;
                             console.log("Role has successfully been added to the table");
                             continueAdding();
-                        })
-                    })
-                })
+                        });
+                    });
+                });
+                break;
                 //How to add a department
             case "Add a department":
                 inquirer.prompt([
@@ -171,13 +172,13 @@ function questions() {
                         validate: validateString
                     }
                 ]).then(function (data) {
-                    var query = connection.query(`INSERT INTO department (department) VALUES ('${data.department}');`,
+                    var query = connection.query(`INSERT INTO department (name) VALUES ('${data.department}');`,
                     function (err, data) {
                         if (err) throw err;
                         return data;
                     })
 
-                    console.log("Department has successfully been added to the list")
+                    console.log("Your new department has successfully been added to the list")
                     continueAdding();
                 });
                 break;
